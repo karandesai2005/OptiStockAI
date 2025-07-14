@@ -38,6 +38,9 @@ const prompt = ai.definePrompt({
   name: 'suggestPriceAdjustmentPrompt',
   input: {schema: SuggestPriceAdjustmentInputSchema},
   output: {schema: SuggestPriceAdjustmentOutputSchema},
+  config: {
+    responseFormat: 'json',
+  },
   prompt: `You are an AI pricing specialist that helps retailers optimize their prices.
 
   Based on the current stock level and forecasted demand for a product, you will suggest a price adjustment.
