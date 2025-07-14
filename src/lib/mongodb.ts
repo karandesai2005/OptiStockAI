@@ -1,10 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
-}
-
-const uri = process.env.MONGODB_URI;
+const uri = "mongodb+srv://cruxal1611:Cruxal1611@optistockai.miiiq5h.mongodb.net/?retryWrites=true&w=majority&appName=OptiStockAI";
 const options = {};
 
 let client;
