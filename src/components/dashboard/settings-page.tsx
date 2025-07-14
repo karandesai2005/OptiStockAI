@@ -81,6 +81,24 @@ export default function SettingsPage() {
           <Button>Save Changes</Button>
         </CardFooter>
       </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>About OptiStock AI</CardTitle>
+          <CardDescription>
+            This application was developed by:
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                <li>Developer Name 1</li>
+                <li>Developer Name 2</li>
+                <li>Developer Name 3</li>
+            </ul>
+        </CardContent>
+        <CardFooter className="border-t px-6 py-4 text-xs text-muted-foreground">
+            Version 1.0.0
+        </CardFooter>
+      </Card>
     </div>
   )
 }
