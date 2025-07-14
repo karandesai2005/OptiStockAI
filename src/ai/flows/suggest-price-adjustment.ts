@@ -74,7 +74,10 @@ const suggestPriceAdjustmentFlow = ai.defineFlow(
   async input => {
     const {output} = await prompt(input);
     if (!output) {
-        throw new Error('AI failed to generate a suggestion.');
+      return {
+        suggestedPriceAdjustment: 'N/A',
+        reasoning: 'Could not generate a suggestion at this time. The model may have returned an empty response.',
+      };
     }
     return output;
   }
