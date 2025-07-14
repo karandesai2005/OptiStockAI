@@ -205,6 +205,9 @@ export default function Dashboard() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 bg-background">
           {renderContent()}
         </main>
+        <footer className="border-t bg-muted/40 py-4 px-6 text-center text-xs text-muted-foreground">
+            developed and maintained by dhairya mehra , karan desai , ruhani rai dhamija , keval nanavati.
+        </footer>
       </div>
     </div>
   )
