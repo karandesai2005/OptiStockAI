@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Bell,
@@ -41,13 +41,26 @@ import AnalyticsPage from '@/components/dashboard/analytics-page'
 import PricingPage from '@/components/dashboard/pricing-page'
 import AlertsPage from '@/components/dashboard/alerts-page'
 import SettingsPage from '@/components/dashboard/settings-page'
-import { initialAlerts, getAlerts, initialProducts } from '@/lib/data'
+import { getAlerts, getProducts } from '@/lib/data'
 import type { Product } from '@/lib/data'
 
 export default function Dashboard() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [products, setProducts] = useState<Product[]>([])
   const [alerts, setAlerts] = useState(() => getAlerts(products))
+  const [loading, setLoading] = useState(true);
   
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const fetchedProducts = await getProducts();
+      setProducts(fetchedProducts);
+      setAlerts(getAlerts(fetchedProducts));
+      setLoading(false);
+    }
+    loadData();
+  }, []);
+
+
   const [activeView, setActiveView] = useState('Overview')
   const navItems = [
     { name: 'Overview', icon: Home },
@@ -59,9 +72,16 @@ export default function Dashboard() {
   ]
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-full">
+            <p>Loading your dashboard...</p>
+        </div>
+      )
+    }
     switch (activeView) {
       case 'Overview':
-        return <OverviewPage />
+        return <OverviewPage products={products} setProducts={setProducts} alerts={alerts} setAlerts={setAlerts} />
       case 'Inventory':
         return <InventoryPage products={products} />
       case 'Analytics':
@@ -73,7 +93,7 @@ export default function Dashboard() {
       case 'Settings':
         return <SettingsPage />
       default:
-        return <OverviewPage />
+        return <OverviewPage products={products} setProducts={setProducts} alerts={alerts} setAlerts={setAlerts} />
     }
   }
 
@@ -99,7 +119,7 @@ export default function Dashboard() {
                 >
                   <item.icon className="h-4 w-4" />
                   {item.name}
-                  {item.badge ? (
+                  {item.badge && item.badge > 0 ? (
                     <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                       {item.badge}
                     </Badge>
@@ -147,7 +167,7 @@ export default function Dashboard() {
                   >
                     <item.icon className="h-5 w-5" />
                     {item.name}
-                    {item.badge ? (
+                    {item.badge && item.badge > 0 ? (
                       <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                         {item.badge}
                       </Badge>

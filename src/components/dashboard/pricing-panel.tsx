@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Tag, Sparkles, ArrowDown, ArrowUp } from 'lucide-react'
 import {
   Card,
@@ -27,11 +27,20 @@ export function PricingPanel({ products }: PricingPanelProps) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Memoize products to prevent re-fetching when parent state changes unrelated to these products.
+  const memoizedProducts = useMemo(() => products, [products]);
+
   useEffect(() => {
     const fetchSuggestions = async () => {
+      if (!memoizedProducts || memoizedProducts.length === 0) {
+          setSuggestions([]);
+          setLoading(false);
+          return;
+      }
+
       setLoading(true)
       try {
-        const productForSuggestion = products[0];
+        const productForSuggestion = memoizedProducts[0];
         
         if (productForSuggestion) {
             const result = await suggestPriceAdjustment({
@@ -53,7 +62,7 @@ export function PricingPanel({ products }: PricingPanelProps) {
       }
     }
     fetchSuggestions()
-  }, [products])
+  }, [memoizedProducts])
 
   const renderSuggestionIcon = (suggestionText: string) => {
     const isIncrease = suggestionText.includes('+') || suggestionText.toLowerCase().includes('increase');

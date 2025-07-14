@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { OverviewCards } from './overview-cards'
 import { StockTrendChart } from './stock-trend-chart'
@@ -9,15 +9,14 @@ import { AlertsPanel } from './alerts-panel'
 import { PricingPanel } from './pricing-panel'
 
 import {
-  initialProducts,
-  initialAlerts,
   initialStockTrend,
-  initialTotalStock,
   initialTurnoverRate,
   initialDemandForecast,
   getAlerts,
   calculateTotalStock,
+  updateProductStock,
   type Product,
+  type Alert,
 } from '@/lib/data'
 import { Button } from '../ui/button'
 import { RefreshCw } from 'lucide-react'
@@ -29,19 +28,31 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-export default function OverviewPage() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
-  const [alerts, setAlerts] = useState(initialAlerts)
-  const [totalStock, setTotalStock] = useState(initialTotalStock)
+interface OverviewPageProps {
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  alerts: Alert[];
+  setAlerts: React.Dispatch<React.SetStateAction<Alert[]>>;
+}
 
-  const handleUpdateStock = () => {
-    const updatedProducts = products.map((p) => ({
-      ...p,
-      stock: Math.max(0, p.stock + Math.floor(Math.random() * 201) - 100), // Change stock by -100 to +100
-    }))
-    setProducts(updatedProducts)
-    setAlerts(getAlerts(updatedProducts))
-    setTotalStock(calculateTotalStock(updatedProducts))
+export default function OverviewPage({ products, setProducts, alerts, setAlerts }: OverviewPageProps) {
+  const [totalStock, setTotalStock] = useState(() => calculateTotalStock(products))
+
+  useEffect(() => {
+    setTotalStock(calculateTotalStock(products));
+  }, [products]);
+
+  const handleUpdateStock = async () => {
+    const updatedProducts = await Promise.all(products.map(async (p) => {
+      const newStock = Math.max(0, p.stock + Math.floor(Math.random() * 201) - 100); // Change stock by -100 to +100
+      await updateProductStock(p.id, newStock);
+      return {
+        ...p,
+        stock: newStock,
+      }
+    }));
+    setProducts(updatedProducts);
+    setAlerts(getAlerts(updatedProducts));
   }
   
   const pricingPanelProduct = products.find(p => p.stock < p.forecastedDemand) || products.find(p => p.stock > p.forecastedDemand) || products[0];

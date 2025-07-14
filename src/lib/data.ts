@@ -1,5 +1,10 @@
+import clientPromise from './mongodb';
+import { ObjectId } from 'mongodb';
+
+// Define a type for our product document that aligns with MongoDB's structure
 export type Product = {
-  id: string;
+  _id: ObjectId; // MongoDB's unique identifier
+  id: string; // Keeping this for component key compatibility, will map from _id
   name: string;
   category: string;
   stock: number;
@@ -25,6 +30,46 @@ export type DemandForecastData = {
   demand: number;
 };
 
+async function getDb() {
+    const client = await clientPromise;
+    return client.db("optistock");
+}
+
+export async function getProducts(): Promise<Product[]> {
+    const db = await getDb();
+    const products = await db.collection('products').find({}).toArray();
+
+    // The initial data seeding logic
+    if (products.length === 0) {
+        console.log('No products found, seeding initial data...');
+        const initialProducts = [
+            { id_string: "PROD001", name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
+            { id_string: "PROD002", name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
+            { id_string: "PROD003", name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
+            { id_string: "PROD004", name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
+            { id_string: "PROD005", name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
+            { id_string: "PROD006", name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
+            { id_string: "PROD007", name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
+            { id_string: "PROD008", name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
+        ];
+        await db.collection('products').insertMany(initialProducts);
+        // Fetch again after seeding
+        const seededProducts = await db.collection('products').find({}).toArray();
+        return seededProducts.map(p => ({ ...p, id: p._id.toString() })) as Product[];
+    }
+    
+    return products.map(p => ({ ...p, id: p._id.toString() })) as Product[];
+}
+
+export async function updateProductStock(productId: string, newStock: number) {
+    const db = await getDb();
+    await db.collection('products').updateOne(
+        { _id: new ObjectId(productId) },
+        { $set: { stock: newStock } }
+    );
+}
+
+// Keeping these for now as they are used by charts, but could be moved to DB
 const generateStockTrend = (days: number, startStock: number, endStock: number): StockTrendData[] => {
     const trend: StockTrendData[] = [];
     const stockChangePerDay = (endStock - startStock) / (days - 1);
@@ -43,27 +88,6 @@ const generateStockTrend = (days: number, startStock: number, endStock: number):
     }
     return trend;
 };
-
-export const initialProducts: Product[] = [
-    { id: "PROD001", name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
-    { id: "PROD002", name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
-    { id: "PROD003", name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
-    { id: "PROD004", name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
-    { id: "PROD005", name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
-    { id: "PROD006", name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
-    { id: "PROD007", name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
-    { id: "PROD008", name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
-];
-
-export const initialDemandForecast: DemandForecastData[] = [
-  { category: 'Electronics', demand: 2000 },
-  { category: 'Apparel', demand: 3000 },
-  { category: 'Home & Garden', demand: 1500 },
-  { category: 'Sports', demand: 1200 },
-  { category: 'Books', demand: 800 },
-];
-
-export const initialStockTrend: StockTrendData[] = generateStockTrend(90, 10236, 9752);
 
 export const getAlerts = (products: Product[]): Alert[] => {
     const alerts: Alert[] = [];
@@ -92,7 +116,6 @@ export const getAlerts = (products: Product[]): Alert[] => {
         });
     }
 
-    // This alert ensures we have 3 as requested
     const yogaMat = products.find(p => p.name === 'Yoga Mat');
     if (yogaMat && yogaMat.stock > 1000) {
         alerts.push({
@@ -108,9 +131,17 @@ export const getAlerts = (products: Product[]): Alert[] => {
     return alerts;
 };
 
-export const initialAlerts = getAlerts(initialProducts);
-
 export const calculateTotalStock = (products: Product[]) => products.reduce((acc, p) => acc + p.stock, 0);
 
-export const initialTotalStock = calculateTotalStock(initialProducts);
+// Static data that can remain
+export const initialDemandForecast: DemandForecastData[] = [
+  { category: 'Electronics', demand: 2000 },
+  { category: 'Apparel', demand: 3000 },
+  { category: 'Home & Garden', demand: 1500 },
+  { category: 'Sports', demand: 1200 },
+  { category: 'Books', demand: 800 },
+];
+
+export const initialStockTrend: StockTrendData[] = generateStockTrend(90, 10236, 9752);
+
 export const initialTurnoverRate = 5.2;

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import {
   Table,
   TableBody,
@@ -9,13 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { suggestPriceAdjustment } from '@/ai/flows/suggest-price-adjustment'
@@ -29,18 +22,22 @@ interface ProductTableProps {
 export function ProductTable({ products }: ProductTableProps) {
     const [suggestions, setSuggestions] = useState<Record<string, string>>({})
     const [loading, setLoading] = useState<Record<string, boolean>>({})
+    
+    const memoizedProducts = useMemo(() => products, [products]);
 
     useEffect(() => {
         const fetchSuggestions = async () => {
+          if (memoizedProducts.length === 0) return;
+
           setLoading(prev => {
             const newLoading = {...prev};
-            products.forEach(p => newLoading[p.id] = true);
+            memoizedProducts.forEach(p => newLoading[p.id] = true);
             return newLoading;
           });
           
           const newSuggestions: Record<string, string> = {};
           
-          await Promise.all(products.map(async (product) => {
+          await Promise.all(memoizedProducts.map(async (product) => {
             try {
               const result = await suggestPriceAdjustment({
                 productName: product.name,
@@ -58,10 +55,8 @@ export function ProductTable({ products }: ProductTableProps) {
           setLoading({});
         };
     
-        if (products.length > 0) {
-          fetchSuggestions();
-        }
-      }, [products]);
+        fetchSuggestions();
+      }, [memoizedProducts]);
 
   const renderSuggestion = (suggestion: string) => {
     const isIncrease = suggestion.includes('+') || suggestion.toLowerCase().includes('increase')
@@ -87,7 +82,7 @@ export function ProductTable({ products }: ProductTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {products.map((product) => (
+        {memoizedProducts.map((product) => (
           <TableRow key={product.id} className="hover:bg-muted/50">
             <TableCell className="font-medium">{product.name}</TableCell>
             <TableCell className="text-right">{product.stock.toLocaleString()}</TableCell>
