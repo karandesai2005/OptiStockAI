@@ -204,10 +204,6 @@ export default function Dashboard() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 bg-background">
           {renderContent()}
         </main>
-        <footer className="border-t bg-muted/40 py-4 px-6 text-center text-xs text-muted-foreground">
-          <p>© 2025 OptiStock AI. All Rights Reserved.</p>
-          <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
-        </footer>
       </div>
     </div>
   )
