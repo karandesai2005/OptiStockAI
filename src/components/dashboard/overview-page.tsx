@@ -21,6 +21,12 @@ import {
 } from '@/lib/data'
 import { Button } from '../ui/button'
 import { RefreshCw } from 'lucide-react'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 export default function OverviewPage() {
   const [products, setProducts] = useState<Product[]>(initialProducts)
