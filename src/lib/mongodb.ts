@@ -1,7 +1,4 @@
 import { MongoClient } from 'mongodb';
-import { config } from 'dotenv';
-
-config(); // Load environment variables from .env file
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
