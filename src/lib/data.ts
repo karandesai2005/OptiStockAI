@@ -1,12 +1,11 @@
 'use server';
 
-import clientPromise from './mongodb';
-import { ObjectId } from 'mongodb';
+import { db } from './firebase';
+import { collection, getDocs, doc, updateDoc, writeBatch } from 'firebase/firestore';
 
-// Define a type for our product document that aligns with MongoDB's structure
+// Define a type for our product document that aligns with Firestore's structure
 export type Product = {
-  _id: ObjectId; // MongoDB's unique identifier
-  id: string; // Keeping this for component key compatibility, will map from _id
+  id: string; // Firestore document ID
   name: string;
   category: string;
   stock: number;
@@ -32,41 +31,46 @@ export type DemandForecastData = {
   demand: number;
 };
 
-async function getDb() {
-    const client = await clientPromise;
-    return client.db("optistock");
+async function seedDatabase() {
+  console.log('No products found, seeding initial data...');
+  const initialProducts = [
+    { name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
+    { name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
+    { name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
+    { name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
+    { name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
+    { name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
+    { name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
+    { name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
+  ];
+
+  const batch = writeBatch(db);
+  const productsCollection = collection(db, 'products');
+
+  initialProducts.forEach((product) => {
+    const docRef = doc(productsCollection); // Firestore generates a unique ID
+    batch.set(docRef, product);
+  });
+
+  await batch.commit();
+  console.log('Database seeded successfully.');
 }
 
 export async function getProducts(): Promise<Product[]> {
-    const db = await getDb();
-    const productsCollection = db.collection('products');
-    let products = await productsCollection.find({}).toArray();
+    const productsCollection = collection(db, 'products');
+    const snapshot = await getDocs(productsCollection);
 
-    // The initial data seeding logic
-    if (products.length === 0) {
-        console.log('No products found, seeding initial data...');
-        const initialProducts = [
-            { name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
-            { name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
-            { name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
-            { name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
-            { name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
-            { name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
-            { name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
-            { name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
-        ];
-        await productsCollection.insertMany(initialProducts);
+    if (snapshot.empty) {
+        await seedDatabase();
         // Fetch again after seeding
-        products = await productsCollection.find({}).toArray();
+        const newSnapshot = await getDocs(productsCollection);
+        return newSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
     }
     
-    return JSON.parse(JSON.stringify(products.map(p => ({ ...p, id: p._id.toString() })))) as Product[];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
 }
 
 export async function updateProductStock(productId: string, newStock: number): Promise<void> {
-    const db = await getDb();
-    await db.collection('products').updateOne(
-        { _id: new ObjectId(productId) },
-        { $set: { stock: newStock } }
-    );
+    const productRef = doc(db, 'products', productId);
+    await updateDoc(productRef, { stock: newStock });
 }
