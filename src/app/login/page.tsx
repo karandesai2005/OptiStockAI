@@ -61,7 +61,7 @@ export default function LoginPage() {
         </Card>
       </div>
       <footer className="w-full py-4 px-6 text-center text-xs text-muted-foreground">
-        developed and maintained by dhairya mehra , karan desai , ruhani rai dhamija , keval nanavati.
+        © 2024 OptiStock AI. All Rights Reserved. Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.
       </footer>
     </div>
   )
