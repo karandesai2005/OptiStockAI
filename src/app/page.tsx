@@ -55,7 +55,7 @@ export default function LandingPage() {
                 width={600}
                 height={400}
                 className="rounded-lg shadow-2xl"
-                data-ai-hint="data abstract"
+                data-ai-hint="dashboard illustration"
               />
             </div>
           </div>
