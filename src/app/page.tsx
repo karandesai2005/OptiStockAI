@@ -36,17 +36,25 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 import OverviewPage from '@/components/dashboard/overview-page'
-import PlaceholderPage from '@/components/dashboard/placeholder-page'
-import { initialAlerts } from '@/lib/data'
+import InventoryPage from '@/components/dashboard/inventory-page'
+import AnalyticsPage from '@/components/dashboard/analytics-page'
+import PricingPage from '@/components/dashboard/pricing-page'
+import AlertsPage from '@/components/dashboard/alerts-page'
+import SettingsPage from '@/components/dashboard/settings-page'
+import { initialAlerts, getAlerts, initialProducts } from '@/lib/data'
+import type { Product } from '@/lib/data'
 
 export default function Dashboard() {
+  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [alerts, setAlerts] = useState(() => getAlerts(products))
+  
   const [activeView, setActiveView] = useState('Overview')
   const navItems = [
     { name: 'Overview', icon: Home },
     { name: 'Inventory', icon: Package },
     { name: 'Analytics', icon: LineChart },
     { name: 'Pricing', icon: Tag },
-    { name: 'Alerts', icon: Bell, badge: initialAlerts.length },
+    { name: 'Alerts', icon: Bell, badge: alerts.length },
     { name: 'Settings', icon: Settings },
   ]
 
@@ -55,15 +63,15 @@ export default function Dashboard() {
       case 'Overview':
         return <OverviewPage />
       case 'Inventory':
-        return <PlaceholderPage title="Inventory Management" />
+        return <InventoryPage products={products} />
       case 'Analytics':
-        return <PlaceholderPage title="Data Analytics" />
+        return <AnalyticsPage />
       case 'Pricing':
-        return <PlaceholderPage title="Dynamic Pricing" />
+        return <PricingPage products={products} />
       case 'Alerts':
-        return <PlaceholderPage title="System Alerts" />
+        return <AlertsPage alerts={alerts} />
       case 'Settings':
-        return <PlaceholderPage title="User Settings" />
+        return <SettingsPage />
       default:
         return <OverviewPage />
     }
@@ -91,11 +99,11 @@ export default function Dashboard() {
                 >
                   <item.icon className="h-4 w-4" />
                   {item.name}
-                  {item.badge && (
+                  {item.badge ? (
                     <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                       {item.badge}
                     </Badge>
-                  )}
+                  ) : null}
                 </button>
               ))}
             </nav>
@@ -139,18 +147,18 @@ export default function Dashboard() {
                   >
                     <item.icon className="h-5 w-5" />
                     {item.name}
-                    {item.badge && (
+                    {item.badge ? (
                       <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                         {item.badge}
                       </Badge>
-                    )}
+                    ) : null}
                   </button>
                 ))}
               </nav>
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
-             <h1 className="text-lg font-semibold md:text-2xl text-foreground/80">AI Inventory Optimization Dashboard</h1>
+             <h1 className="text-lg font-semibold md:text-2xl text-foreground/80">{activeView}</h1>
           </div>
           <ThemeToggle />
           <DropdownMenu>

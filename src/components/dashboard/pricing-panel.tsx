@@ -31,7 +31,7 @@ export function PricingPanel({ products }: PricingPanelProps) {
     const fetchSuggestions = async () => {
       setLoading(true)
       try {
-        const productForSuggestion = products.find(p => p.stock < p.forecastedDemand) || products.find(p => p.stock > p.forecastedDemand) || products[0];
+        const productForSuggestion = products[0];
         
         if (productForSuggestion) {
             const result = await suggestPriceAdjustment({
@@ -71,12 +71,12 @@ export function PricingPanel({ products }: PricingPanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <Sparkles className="h-5 w-5 text-primary" />
-          AI Pricing Suggestions
+          {products[0]?.name || 'Suggestion'}
         </CardTitle>
         <CardDescription>
-          Dynamic pricing based on forecast and stock.
+          AI Pricing Suggestion
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -101,7 +101,7 @@ export function PricingPanel({ products }: PricingPanelProps) {
               </div>
               <div>
                 <p className="font-semibold">
-                  {s.productName}: <span className={cn(
+                  New Price: <span className={cn(
                      s.suggestion.includes('+') || s.suggestion.toLowerCase().includes('increase') ? 'text-green-600' : '',
                      s.suggestion.includes('-') || s.suggestion.toLowerCase().includes('decrease') ? 'text-red-600' : 'text-muted-foreground',
                   )}>{s.suggestion}</span>

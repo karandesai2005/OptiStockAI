@@ -31,21 +31,37 @@ export function ProductTable({ products }: ProductTableProps) {
     const [loading, setLoading] = useState<Record<string, boolean>>({})
 
     useEffect(() => {
-        products.forEach(product => {
-            if (loading[product.id] === undefined) {
-                setLoading(prev => ({...prev, [product.id]: true}));
-                suggestPriceAdjustment({
-                    productName: product.name,
-                    currentStock: product.stock,
-                    forecastedDemand: product.forecastedDemand,
-                }).then(result => {
-                    setSuggestions(prev => ({ ...prev, [product.id]: result.suggestedPriceAdjustment }))
-                }).finally(() => {
-                    setLoading(prev => ({...prev, [product.id]: false}));
-                });
+        const fetchSuggestions = async () => {
+          setLoading(prev => {
+            const newLoading = {...prev};
+            products.forEach(p => newLoading[p.id] = true);
+            return newLoading;
+          });
+          
+          const newSuggestions: Record<string, string> = {};
+          
+          await Promise.all(products.map(async (product) => {
+            try {
+              const result = await suggestPriceAdjustment({
+                productName: product.name,
+                currentStock: product.stock,
+                forecastedDemand: product.forecastedDemand,
+              });
+              newSuggestions[product.id] = result.suggestedPriceAdjustment;
+            } catch (error) {
+              console.error(`Failed to get suggestion for ${product.name}`, error);
+              newSuggestions[product.id] = "Error";
             }
-        });
-    }, [products, loading]);
+          }));
+    
+          setSuggestions(newSuggestions);
+          setLoading({});
+        };
+    
+        if (products.length > 0) {
+          fetchSuggestions();
+        }
+      }, [products]);
 
   const renderSuggestion = (suggestion: string) => {
     const isIncrease = suggestion.includes('+') || suggestion.toLowerCase().includes('increase')
@@ -61,41 +77,31 @@ export function ProductTable({ products }: ProductTableProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Top Products</CardTitle>
-        <CardDescription>
-          Overview of top-selling products and AI-powered suggestions.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="text-right">Current Stock</TableHead>
-              <TableHead className="text-right">Forecasted Demand</TableHead>
-              <TableHead className="text-right">Suggested Price Adjustment</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id} className="hover:bg-muted/50">
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell className="text-right">{product.stock.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{product.forecastedDemand.toLocaleString()}</TableCell>
-                <TableCell className="text-right">
-                  {loading[product.id] ? (
-                    <Skeleton className="h-5 w-24 ml-auto" />
-                  ) : (
-                    renderSuggestion(suggestions[product.id] || '')
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead className="text-right">Current Stock</TableHead>
+          <TableHead className="text-right">Forecasted Demand</TableHead>
+          <TableHead className="text-right">Suggested Price Adjustment</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {products.map((product) => (
+          <TableRow key={product.id} className="hover:bg-muted/50">
+            <TableCell className="font-medium">{product.name}</TableCell>
+            <TableCell className="text-right">{product.stock.toLocaleString()}</TableCell>
+            <TableCell className="text-right">{product.forecastedDemand.toLocaleString()}</TableCell>
+            <TableCell className="text-right">
+              {loading[product.id] ? (
+                <Skeleton className="h-5 w-24 ml-auto" />
+              ) : (
+                renderSuggestion(suggestions[product.id] || '')
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }

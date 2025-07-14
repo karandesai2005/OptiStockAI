@@ -24,6 +24,7 @@ import { RefreshCw } from 'lucide-react'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -42,6 +43,8 @@ export default function OverviewPage() {
     setAlerts(getAlerts(updatedProducts))
     setTotalStock(calculateTotalStock(updatedProducts))
   }
+  
+  const pricingPanelProduct = products.find(p => p.stock < p.forecastedDemand) || products.find(p => p.stock > p.forecastedDemand) || products[0];
 
   return (
     <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
@@ -62,11 +65,21 @@ export default function OverviewPage() {
       </div>
 
       <div className="xl:col-span-3">
-        <ProductTable products={products.slice(0, 5)} />
+        <Card>
+            <CardHeader>
+                <CardTitle>Top Products</CardTitle>
+                <CardDescription>
+                Overview of top-selling products and AI-powered suggestions.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ProductTable products={products.slice(0, 5)} />
+            </CardContent>
+        </Card>
       </div>
 
       <div className="xl:col-span-2">
-        <PricingPanel products={products} />
+        {pricingPanelProduct && <PricingPanel products={[pricingPanelProduct]} />}
       </div>
 
       <div>
