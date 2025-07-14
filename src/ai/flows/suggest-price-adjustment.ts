@@ -40,6 +40,12 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestPriceAdjustmentOutputSchema},
   config: {
     responseFormat: 'json',
+    safetySettings: [
+        {
+          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          threshold: 'BLOCK_ONLY_HIGH',
+        },
+    ],
   },
   prompt: `You are an AI pricing specialist that helps retailers optimize their prices.
 
@@ -67,6 +73,9 @@ const suggestPriceAdjustmentFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+        throw new Error('AI failed to generate a suggestion.');
+    }
+    return output;
   }
 );
