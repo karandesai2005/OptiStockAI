@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Package2 } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 
 export default function LoginPage() {
   return (
@@ -18,7 +18,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
             <div className="mb-4 flex justify-center">
-                <Package2 className="h-10 w-10 text-primary" />
+                <Sparkles className="h-10 w-10 text-primary" />
             </div>
           <CardTitle className="text-2xl">Login to OptiStock AI</CardTitle>
           <CardDescription>
