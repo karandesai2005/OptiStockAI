@@ -15,12 +15,12 @@ import { Sparkles } from 'lucide-react'
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4">
-      <div className="flex-grow flex items-center justify-center w-full">
-        <Card className="w-full max-w-sm">
+      <div className="w-full max-w-sm">
+        <Card>
           <CardHeader className="text-center">
-              <div className="mb-4 flex justify-center">
+              <Link href="/" className="mb-4 flex justify-center">
                   <Sparkles className="h-10 w-10 text-primary" />
-              </div>
+              </Link>
             <CardTitle className="text-2xl">Login to OptiStock AI</CardTitle>
             <CardDescription>
               Enter your email below to login to your account
@@ -46,9 +46,12 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" asChild>
               <Link href="/dashboard">Login</Link>
             </Button>
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/signup">Sign up</Link>
-            </Button>
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="underline">
+                Sign up
+              </Link>
+            </div>
           </CardContent>
           <CardFooter>
               <div className="text-xs text-muted-foreground text-center w-full">
@@ -60,7 +63,7 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      <footer className="w-full py-4 px-6 text-center text-xs text-muted-foreground">
+      <footer className="w-full mt-auto py-4 px-6 text-center text-xs text-muted-foreground">
         <p>© 2025 OptiStock AI. All Rights Reserved.</p>
         <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
       </footer>

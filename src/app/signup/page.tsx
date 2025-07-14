@@ -14,12 +14,12 @@ import { Sparkles } from 'lucide-react'
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4">
-      <div className="flex-grow flex items-center justify-center w-full">
-        <Card className="w-full max-w-sm">
+      <div className="w-full max-w-sm">
+        <Card>
           <CardHeader className="text-center">
-              <div className="mb-4 flex justify-center">
-                  <Sparkles className="h-10 w-10 text-primary" />
-              </div>
+            <Link href="/" className="mb-4 flex justify-center">
+                <Sparkles className="h-10 w-10 text-primary" />
+            </Link>
             <CardTitle className="text-2xl">Create an account</CardTitle>
             <CardDescription>
               Enter your information to create an account
@@ -50,14 +50,14 @@ export default function SignupPage() {
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{' '}
-              <Link href="/" className="underline">
+              <Link href="/login" className="underline">
                 Login
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
-      <footer className="w-full py-4 px-6 text-center text-xs text-muted-foreground">
+      <footer className="w-full mt-auto py-4 px-6 text-center text-xs text-muted-foreground">
         <p>© 2025 OptiStock AI. All Rights Reserved.</p>
         <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
       </footer>
