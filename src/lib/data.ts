@@ -46,14 +46,14 @@ export async function getProducts(): Promise<Product[]> {
     if (products.length === 0) {
         console.log('No products found, seeding initial data...');
         const initialProducts = [
-            { id_string: "PROD001", name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
-            { id_string: "PROD002", name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
-            { id_string: "PROD003", name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
-            { id_string: "PROD004", name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
-            { id_string: "PROD005", name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
-            { id_string: "PROD006", name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
-            { id_string: "PROD007", name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
-            { id_string: "PROD008", name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
+            { name: 'Laptop', category: 'Electronics', stock: 500, forecastedDemand: 600 },
+            { name: 'Headphones', category: 'Electronics', stock: 50, forecastedDemand: 200 },
+            { name: 'T-Shirt', category: 'Apparel', stock: 2000, forecastedDemand: 1500 },
+            { name: 'Smart Watch', category: 'Electronics', stock: 300, forecastedDemand: 350 },
+            { name: 'Running Shoes', category: 'Apparel', stock: 800, forecastedDemand: 900 },
+            { name: 'Yoga Mat', category: 'Sports', stock: 1200, forecastedDemand: 1000 },
+            { name: 'Gardening Gloves', category: 'Home & Garden', stock: 1500, forecastedDemand: 1200 },
+            { name: 'Sci-Fi Novel', category: 'Books', stock: 280, forecastedDemand: 250 },
         ];
         await productsCollection.insertMany(initialProducts);
         // Fetch again after seeding
