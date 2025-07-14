@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, BarChart, Package, Sparkles, Tag } from 'lucide-react'
-import Image from 'next/image'
+
+// Note: The Image import is no longer used and can be removed if you wish.
+// import Image from 'next/image' 
 
 export default function LandingPage() {
   return (
@@ -28,40 +30,30 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-          <div className="container grid max-w-screen-xl grid-cols-1 items-center gap-8 md:grid-cols-2">
-            <div className="flex flex-col items-start gap-4">
-                <h1 className="text-left text-3xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-                AI-Driven Inventory Optimization
-                </h1>
-                <p className="max-w-[42rem] text-left leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                Transform your inventory management with advanced AI forecasting, real-time stock monitoring, and intelligent pricing recommendations. Reduce stockouts, optimize revenue, and streamline operations.
-                </p>
-                <div className="space-x-4">
-                <Button size="lg" asChild>
-                    <Link href="/signup">
-                    Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                    <Link href="#">Watch Demo</Link>
-                </Button>
-                </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <Image 
-                src="https://placehold.co/600x400.png" 
-                alt="AI Dashboard Illustration"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-2xl"
-                data-ai-hint="dashboard illustration"
-              />
+        {/* MODIFIED: The 'container' class is now on the <section> tag for consistency. */}
+        <section className="container space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
+          {/* MODIFIED: The 'container' class was removed from this div. */}
+          <div className="flex flex-col items-center gap-6 text-center">
+            <h1 className="text-3xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+              AI-Driven Inventory Optimization
+            </h1>
+            <p className="max-w-[48rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+              Transform your inventory management with advanced AI forecasting, real-time stock monitoring, and intelligent pricing recommendations. Reduce stockouts, optimize revenue, and streamline operations.
+            </p>
+            <div className="space-x-4">
+              <Button size="lg" asChild>
+                  <Link href="/signup">
+                  Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                  <Link href="#">Watch Demo</Link>
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Stats Section */}
+        {/* Stats Section (Structure is correct, no changes needed) */}
         <section className="container space-y-6 py-8 md:py-12 lg:py-24">
             <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-4">
                 <div className="flex flex-col items-center justify-center rounded-lg bg-muted/50 p-8 text-center">
@@ -83,7 +75,7 @@ export default function LandingPage() {
             </div>
         </section>
         
-        {/* Features Section */}
+        {/* Features Section (Structure is correct, no changes needed) */}
         <section className="container space-y-6 py-8 md:py-12 lg:py-24">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
