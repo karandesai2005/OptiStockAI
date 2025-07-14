@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { suggestPriceAdjustment } from '@/ai/flows/suggest-price-adjustment'
 import type { Product } from '@/lib/data'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 
@@ -21,41 +20,26 @@ interface ProductTableProps {
 
 export function ProductTable({ products }: ProductTableProps) {
     const [suggestions, setSuggestions] = useState<Record<string, string>>({})
-    const [loading, setLoading] = useState<Record<string, boolean>>({})
+    const [loading, setLoading] = useState(false)
     
     const memoizedProducts = useMemo(() => products, [products]);
 
     useEffect(() => {
-        const fetchSuggestions = async () => {
-          if (memoizedProducts.length === 0) return;
+        if (memoizedProducts.length === 0) return;
 
-          setLoading(prev => {
-            const newLoading = {...prev};
-            memoizedProducts.forEach(p => newLoading[p.id] = true);
-            return newLoading;
-          });
-          
-          const newSuggestions: Record<string, string> = {};
-          
-          await Promise.all(memoizedProducts.map(async (product) => {
-            try {
-              const result = await suggestPriceAdjustment({
-                productName: product.name,
-                currentStock: product.stock,
-                forecastedDemand: product.forecastedDemand,
-              });
-              newSuggestions[product.id] = result.suggestedPriceAdjustment;
-            } catch (error) {
-              console.error(`Failed to get suggestion for ${product.name}`, error);
-              newSuggestions[product.id] = "Error";
+        const newSuggestions: Record<string, string> = {};
+        memoizedProducts.forEach(product => {
+            const stockDiff = product.stock - product.forecastedDemand;
+            if (stockDiff < -100) {
+                newSuggestions[product.id] = "+10%";
+            } else if (stockDiff > 200) {
+                newSuggestions[product.id] = "-15%";
+            } else {
+                newSuggestions[product.id] = "Hold";
             }
-          }));
-    
-          setSuggestions(newSuggestions);
-          setLoading({});
-        };
-    
-        fetchSuggestions();
+        });
+  
+        setSuggestions(newSuggestions);
       }, [memoizedProducts]);
 
   const renderSuggestion = (suggestion: string) => {
@@ -88,7 +72,7 @@ export function ProductTable({ products }: ProductTableProps) {
             <TableCell className="text-right">{product.stock.toLocaleString()}</TableCell>
             <TableCell className="text-right">{product.forecastedDemand.toLocaleString()}</TableCell>
             <TableCell className="text-right">
-              {loading[product.id] ? (
+              {loading ? (
                 <Skeleton className="h-5 w-24 ml-auto" />
               ) : (
                 renderSuggestion(suggestions[product.id] || '')

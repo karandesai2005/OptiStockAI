@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { suggestPriceAdjustment } from '@/ai/flows/suggest-price-adjustment'
 import type { Product } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
@@ -25,43 +24,36 @@ type Suggestion = {
 
 export function PricingPanel({ products }: PricingPanelProps) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  // Memoize products to prevent re-fetching when parent state changes unrelated to these products.
   const memoizedProducts = useMemo(() => products, [products]);
 
   useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (!memoizedProducts || memoizedProducts.length === 0) {
-          setSuggestions([]);
-          setLoading(false);
-          return;
-      }
-
-      setLoading(true)
-      try {
-        const productForSuggestion = memoizedProducts[0];
-        
-        if (productForSuggestion) {
-            const result = await suggestPriceAdjustment({
-                productName: productForSuggestion.name,
-                currentStock: productForSuggestion.stock,
-                forecastedDemand: productForSuggestion.forecastedDemand,
-            });
-            setSuggestions([{
-                productName: productForSuggestion.name,
-                suggestion: result.suggestedPriceAdjustment,
-                reasoning: result.reasoning
-            }]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch pricing suggestions:", error)
-        setSuggestions([])
-      } finally {
-        setLoading(false)
-      }
+    if (!memoizedProducts || memoizedProducts.length === 0) {
+      setSuggestions([])
+      return
     }
-    fetchSuggestions()
+
+    const productForSuggestion = memoizedProducts[0];
+    if (productForSuggestion) {
+        let suggestionText = "Maintain Price"
+        let reasoning = "Stock levels are balanced with forecasted demand."
+        const stockDiff = productForSuggestion.stock - productForSuggestion.forecastedDemand
+
+        if (stockDiff < -100) { // Significantly lower stock
+            suggestionText = "+10%"
+            reasoning = "Stock is significantly lower than forecasted demand. Increase price to maximize revenue."
+        } else if (stockDiff > 200) { // Significantly higher stock
+            suggestionText = "-15%"
+            reasoning = "Stock is significantly higher than forecasted demand. Decrease price to clear excess inventory."
+        }
+        
+        setSuggestions([{
+            productName: productForSuggestion.name,
+            suggestion: suggestionText,
+            reasoning: reasoning
+        }]);
+    }
   }, [memoizedProducts])
 
   const renderSuggestionIcon = (suggestionText: string) => {
