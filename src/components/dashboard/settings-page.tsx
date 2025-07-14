@@ -81,17 +81,6 @@ export default function SettingsPage() {
           <Button>Save Changes</Button>
         </CardFooter>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>About OptiStock AI</CardTitle>
-          <CardDescription>Version 1.0.0</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <p className="text-sm text-muted-foreground">
-                This application is an AI-powered inventory and pricing optimization dashboard built with Next.js and Firebase.
-            </p>
-        </CardContent>
-      </Card>
     </div>
   )
 }

@@ -7,7 +7,6 @@ import {
   Home,
   LineChart,
   Package,
-  Package2,
   Settings,
   ShoppingCart,
   Sparkles,
@@ -141,7 +140,7 @@ export default function Dashboard() {
                 size="icon"
                 className="shrink-0 md:hidden"
               >
-                <Package2 className="h-5 w-5" />
+                <Sparkles className="h-5 w-5 text-primary" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
@@ -206,8 +205,8 @@ export default function Dashboard() {
           {renderContent()}
         </main>
         <footer className="border-t bg-muted/40 py-4 px-6 text-center text-xs text-muted-foreground">
-            <p>© 2025 OptiStock AI. All Rights Reserved.</p>
-            <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
+          <p>© 2025 OptiStock AI. All Rights Reserved.</p>
+          <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
         </footer>
       </div>
     </div>

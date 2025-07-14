@@ -21,9 +21,9 @@ export default function LoginPage() {
               <Link href="/" className="mb-4 flex justify-center">
                   <Sparkles className="h-10 w-10 text-primary" />
               </Link>
-            <CardTitle className="text-2xl">Login to OptiStock AI</CardTitle>
+            <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Enter your email below to login to your account
+              Enter your credentials to access your dashboard.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
@@ -63,10 +63,6 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      <footer className="w-full mt-auto py-4 px-6 text-center text-xs text-muted-foreground">
-        <p>© 2025 OptiStock AI. All Rights Reserved.</p>
-        <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
-      </footer>
     </div>
   )
 }

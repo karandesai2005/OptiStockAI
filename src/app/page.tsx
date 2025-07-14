@@ -111,15 +111,6 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-
-      <footer className="w-full border-t bg-background">
-        <div className="container flex flex-col items-center justify-center gap-1 h-24 text-center">
-            <p className="text-sm text-muted-foreground">© 2025 OptiStock AI. All Rights Reserved.</p>
-            <p className="text-xs text-muted-foreground">
-                Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.
-            </p>
-        </div>
-      </footer>
     </div>
   )
 }

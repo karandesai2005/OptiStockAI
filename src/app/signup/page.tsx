@@ -20,9 +20,9 @@ export default function SignupPage() {
             <Link href="/" className="mb-4 flex justify-center">
                 <Sparkles className="h-10 w-10 text-primary" />
             </Link>
-            <CardTitle className="text-2xl">Create an account</CardTitle>
+            <CardTitle className="text-2xl">Create Your Account</CardTitle>
             <CardDescription>
-              Enter your information to create an account
+              Join OptiStock AI and optimize your inventory.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -57,10 +57,6 @@ export default function SignupPage() {
           </CardContent>
         </Card>
       </div>
-      <footer className="w-full mt-auto py-4 px-6 text-center text-xs text-muted-foreground">
-        <p>© 2025 OptiStock AI. All Rights Reserved.</p>
-        <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
-      </footer>
     </div>
   )
 }
