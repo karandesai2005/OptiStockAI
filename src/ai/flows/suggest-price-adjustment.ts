@@ -39,7 +39,6 @@ const prompt = ai.definePrompt({
   input: {schema: SuggestPriceAdjustmentInputSchema},
   output: {schema: SuggestPriceAdjustmentOutputSchema},
   config: {
-    responseFormat: 'json',
     safetySettings: [
         {
           category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
@@ -47,7 +46,7 @@ const prompt = ai.definePrompt({
         },
     ],
   },
-  prompt: `You are an AI pricing specialist that helps retailers optimize their prices.
+  prompt: `You are an AI pricing specialist that helps retailers optimize their prices. Your response MUST be a valid JSON object.
 
   Based on the current stock level and forecasted demand for a product, you will suggest a price adjustment.
 
@@ -60,8 +59,14 @@ const prompt = ai.definePrompt({
   - If the current stock is significantly lower than the forecasted demand, suggest a price increase to maximize revenue.
   - If the current stock is roughly equal to the forecasted demand, suggest maintaining the current price.
 
-  The suggestedPriceAdjustment should include the percentage and whether to increase or decrease the price.
+  The suggestedPriceAdjustment should include the percentage and whether to increase or decrease the price (e.g., "+10%", "-5%").
   Also, include a short reasoning for the suggested price adjustment.
+  
+  Provide your response as a JSON object matching this exact format:
+  {
+    "suggestedPriceAdjustment": "string",
+    "reasoning": "string"
+  }
   `,
 });
 
@@ -73,12 +78,16 @@ const suggestPriceAdjustmentFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
+    
     if (!output) {
       return {
         suggestedPriceAdjustment: 'N/A',
-        reasoning: 'Could not generate a suggestion at this time. The model may have returned an empty response.',
+        reasoning: 'Could not generate a suggestion at this time. The model returned an empty response.',
       };
     }
+    
+    // The model output should be a JSON object now.
+    // No parsing needed as genkit handles it with the output schema.
     return output;
   }
 );
