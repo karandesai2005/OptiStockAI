@@ -1,21 +1,4 @@
-'use client'
-
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import {
-  Bell,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  Settings,
-  ShoppingCart,
-  Sparkles,
-  Tag,
-  Users,
-} from 'lucide-react'
-
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -23,192 +6,101 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { Label } from '@/components/ui/label'
+import { Sparkles, Package, LineChart, Tag } from 'lucide-react'
 
-import OverviewPage from '@/components/dashboard/overview-page'
-import InventoryPage from '@/components/dashboard/inventory-page'
-import AnalyticsPage from '@/components/dashboard/analytics-page'
-import PricingPage from '@/components/dashboard/pricing-page'
-import AlertsPage from '@/components/dashboard/alerts-page'
-import SettingsPage from '@/components/dashboard/settings-page'
-import { getProducts } from '@/lib/data'
-import { getAlerts } from '@/lib/data-helpers'
-import type { Product, Alert } from '@/lib/data'
-
-export default function Dashboard() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [alerts, setAlerts] = useState<Alert[]>([])
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      const fetchedProducts = await getProducts();
-      setProducts(fetchedProducts);
-      setAlerts(getAlerts(fetchedProducts));
-      setLoading(false);
-    }
-    loadData();
-  }, []);
-
-
-  const [activeView, setActiveView] = useState('Overview')
-  const navItems = [
-    { name: 'Overview', icon: Home },
-    { name: 'Inventory', icon: Package },
-    { name: 'Analytics', icon: LineChart },
-    { name: 'Pricing', icon: Tag },
-    { name: 'Alerts', icon: Bell, badge: alerts.length },
-    { name: 'Settings', icon: Settings },
-  ]
-
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center h-full">
-            <p>Loading your dashboard...</p>
-        </div>
-      )
-    }
-    switch (activeView) {
-      case 'Overview':
-        return <OverviewPage products={products} setProducts={setProducts} alerts={alerts} setAlerts={setAlerts} />
-      case 'Inventory':
-        return <InventoryPage products={products} />
-      case 'Analytics':
-        return <AnalyticsPage />
-      case 'Pricing':
-        return <PricingPage products={products} />
-      case 'Alerts':
-        return <AlertsPage alerts={alerts} />
-      case 'Settings':
-        return <SettingsPage />
-      default:
-        return <OverviewPage products={products} setProducts={setProducts} alerts={alerts} setAlerts={setAlerts} />
-    }
-  }
-
+export default function LandingPage() {
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <span className="">OptiStock AI</span>
-            </Link>
-          </div>
-          <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => setActiveView(item.name)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
-                    activeView === item.name ? 'bg-muted text-primary' : ''
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                  {item.badge && item.badge > 0 ? (
-                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                      {item.badge}
-                    </Badge>
-                  ) : null}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Package2 className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
+    <div className="flex min-h-screen w-full bg-background">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8">
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center">
+            <div className="mb-4 flex justify-center">
+              <Sparkles className="h-10 w-10 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Login to OptiStock AI</CardTitle>
+            <CardDescription>
+              Enter your email below to login to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="m@example.com" required />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
                 <Link
                   href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
+                  className="ml-auto inline-block text-sm underline"
                 >
-                  <Sparkles className="h-6 w-6 text-primary" />
-                  <span className="sr-only">OptiStock AI</span>
+                  Forgot your password?
                 </Link>
-                {navItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      setActiveView(item.name)
-                      // Close sheet on mobile
-                      const closeButton = document.querySelector('[data-radix-dialog-close]') as HTMLElement;
-                      closeButton?.click();
-                    }}
-                    className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground ${
-                      activeView === item.name ? 'bg-muted text-foreground' : ''
-                    }`}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
-                    {item.badge && item.badge > 0 ? (
-                      <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                        {item.badge}
-                      </Badge>
-                    ) : null}
-                  </button>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-          <div className="w-full flex-1">
-             <h1 className="text-lg font-semibold md:text-2xl text-foreground/80">{activeView}</h1>
-          </div>
-          <ThemeToggle />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <Users className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/login">Logout</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 bg-background">
-          {renderContent()}
-        </main>
-        <footer className="border-t bg-muted/40 py-4 px-6 text-center text-xs text-muted-foreground">
-            <p>© 2024 OptiStock AI. All Rights Reserved.</p>
+              </div>
+              <Input id="password" type="password" required />
+            </div>
+            <Button type="submit" className="w-full" asChild>
+              <Link href="/dashboard">Login</Link>
+            </Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/signup">Sign up</Link>
+            </Button>
+          </CardContent>
+          <CardFooter>
+            <div className="text-xs text-muted-foreground text-center w-full">
+              <p className="font-semibold">Demo Accounts:</p>
+              <p>demo1@xai.com / test123</p>
+              <p>demo2@xai.com / test123</p>
+              <p>demo3@xai.com / test123</p>
+            </div>
+          </CardFooter>
+        </Card>
+        <footer className="w-full mt-auto pt-6 px-6 text-center text-xs text-muted-foreground">
+            <p>© 2025 OptiStock AI. All Rights Reserved.</p>
             <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
         </footer>
+      </div>
+      <div className="hidden lg:flex lg:flex-1 bg-muted/40 items-center justify-center p-8">
+          <div className="max-w-md text-center">
+            <Sparkles className="h-16 w-16 mx-auto text-primary mb-6"/>
+            <h2 className="text-3xl font-bold text-foreground">Welcome to OptiStock AI</h2>
+            <p className="text-muted-foreground mt-4">
+                The future of inventory management is here. Leverage the power of AI to optimize your stock, forecast demand, and make smarter pricing decisions.
+            </p>
+            <div className="mt-8 space-y-4 text-left">
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <Package className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold">Smart Inventory Tracking</h3>
+                        <p className="text-sm text-muted-foreground">Monitor stock levels in real-time and get automated alerts for low stock or overstock items.</p>
+                    </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <LineChart className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold">AI-Powered Demand Forecasting</h3>
+                        <p className="text-sm text-muted-foreground">Predict future sales trends with high accuracy to stay ahead of the curve.</p>
+                    </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <Tag className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold">Dynamic Pricing Suggestions</h3>
+                        <p className="text-sm text-muted-foreground">Receive intelligent pricing recommendations to maximize revenue and clear inventory.</p>
+                    </div>
+                </div>
+            </div>
+          </div>
       </div>
     </div>
   )

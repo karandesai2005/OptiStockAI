@@ -44,7 +44,7 @@ export default function LoginPage() {
               <Input id="password" type="password" required />
             </div>
             <Button type="submit" className="w-full" asChild>
-              <Link href="/">Login</Link>
+              <Link href="/dashboard">Login</Link>
             </Button>
             <Button variant="outline" className="w-full" asChild>
               <Link href="/signup">Sign up</Link>
@@ -61,7 +61,7 @@ export default function LoginPage() {
         </Card>
       </div>
       <footer className="w-full py-4 px-6 text-center text-xs text-muted-foreground">
-        <p>© 2024 OptiStock AI. All Rights Reserved.</p>
+        <p>© 2025 OptiStock AI. All Rights Reserved.</p>
         <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
       </footer>
     </div>

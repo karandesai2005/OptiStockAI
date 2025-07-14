@@ -45,12 +45,12 @@ export default function SignupPage() {
                 <Input id="password" type="password" />
               </div>
               <Button type="submit" className="w-full" asChild>
-                <Link href="/">Create account</Link>
+                <Link href="/dashboard">Create account</Link>
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{' '}
-              <Link href="/login" className="underline">
+              <Link href="/" className="underline">
                 Login
               </Link>
             </div>
@@ -58,7 +58,7 @@ export default function SignupPage() {
         </Card>
       </div>
       <footer className="w-full py-4 px-6 text-center text-xs text-muted-foreground">
-        <p>© 2024 OptiStock AI. All Rights Reserved.</p>
+        <p>© 2025 OptiStock AI. All Rights Reserved.</p>
         <p>Developed by Dhairya Mehra, Karan Desai, Ruhani Rai Dhamija, & Keval Nanavati.</p>
       </footer>
     </div>
