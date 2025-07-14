@@ -14,10 +14,8 @@ import {
   initialDemandForecast,
   getAlerts,
   calculateTotalStock,
-  updateProductStock,
-  type Product,
-  type Alert,
-} from '@/lib/data'
+} from '@/lib/data-helpers'
+import { updateProductStock, type Product, type Alert } from '@/lib/data'
 import { Button } from '../ui/button'
 import { RefreshCw } from 'lucide-react'
 import {

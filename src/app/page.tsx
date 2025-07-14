@@ -41,12 +41,13 @@ import AnalyticsPage from '@/components/dashboard/analytics-page'
 import PricingPage from '@/components/dashboard/pricing-page'
 import AlertsPage from '@/components/dashboard/alerts-page'
 import SettingsPage from '@/components/dashboard/settings-page'
-import { getAlerts, getProducts } from '@/lib/data'
-import type { Product } from '@/lib/data'
+import { getProducts } from '@/lib/data'
+import { getAlerts } from '@/lib/data-helpers'
+import type { Product, Alert } from '@/lib/data'
 
 export default function Dashboard() {
   const [products, setProducts] = useState<Product[]>([])
-  const [alerts, setAlerts] = useState(() => getAlerts(products))
+  const [alerts, setAlerts] = useState<Alert[]>([])
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {

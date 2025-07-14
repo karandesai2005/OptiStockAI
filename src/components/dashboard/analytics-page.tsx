@@ -2,7 +2,7 @@
 
 import { StockTrendChart } from './stock-trend-chart'
 import { DemandForecastChart } from './demand-forecast-chart'
-import { initialStockTrend, initialDemandForecast } from '@/lib/data'
+import { initialStockTrend, initialDemandForecast } from '@/lib/data-helpers'
 
 export default function AnalyticsPage() {
   return (
