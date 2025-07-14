@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, BarChart, Package, Sparkles, Tag } from 'lucide-react'
+import Image from 'next/image'
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="flex min-h-[calc(100vh-theme(spacing.24))] w-full flex-col bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <Link href="#" className="mr-6 flex items-center space-x-2">
@@ -28,22 +29,34 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-            <h1 className="text-center text-3xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-              AI-Driven Inventory Optimization
-            </h1>
-            <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-              Transform your inventory management with advanced AI forecasting, real-time stock monitoring, and intelligent pricing recommendations. Reduce stockouts, optimize revenue, and streamline operations.
-            </p>
-            <div className="space-x-4">
-              <Button size="lg" asChild>
-                <Link href="/signup">
-                  Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="#">Watch Demo</Link>
-              </Button>
+          <div className="container grid max-w-screen-xl grid-cols-1 items-center gap-8 md:grid-cols-2">
+            <div className="flex flex-col items-start gap-4">
+                <h1 className="text-left text-3xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+                AI-Driven Inventory Optimization
+                </h1>
+                <p className="max-w-[42rem] text-left leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+                Transform your inventory management with advanced AI forecasting, real-time stock monitoring, and intelligent pricing recommendations. Reduce stockouts, optimize revenue, and streamline operations.
+                </p>
+                <div className="space-x-4">
+                <Button size="lg" asChild>
+                    <Link href="/signup">
+                    Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                    <Link href="#">Watch Demo</Link>
+                </Button>
+                </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <Image 
+                src="https://placehold.co/600x400.png" 
+                alt="AI Dashboard Illustration"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-2xl"
+                data-ai-hint="data abstract"
+              />
             </div>
           </div>
         </section>
