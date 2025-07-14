@@ -1,0 +1,122 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { Tag, Sparkles, ArrowDown, ArrowUp } from 'lucide-react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { suggestPriceAdjustment } from '@/ai/flows/suggest-price-adjustment'
+import type { Product } from '@/lib/data'
+import { cn } from '@/lib/utils'
+
+interface PricingPanelProps {
+  products: Product[]
+}
+
+type Suggestion = {
+  productName: string
+  suggestion: string
+  reasoning: string
+}
+
+export function PricingPanel({ products }: PricingPanelProps) {
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      setLoading(true)
+      try {
+        const productForSuggestion = products.find(p => p.stock < p.forecastedDemand) || products.find(p => p.stock > p.forecastedDemand) || products[0];
+        
+        if (productForSuggestion) {
+            const result = await suggestPriceAdjustment({
+                productName: productForSuggestion.name,
+                currentStock: productForSuggestion.stock,
+                forecastedDemand: productForSuggestion.forecastedDemand,
+            });
+            setSuggestions([{
+                productName: productForSuggestion.name,
+                suggestion: result.suggestedPriceAdjustment,
+                reasoning: result.reasoning
+            }]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch pricing suggestions:", error)
+        setSuggestions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSuggestions()
+  }, [products])
+
+  const renderSuggestionIcon = (suggestionText: string) => {
+    const isIncrease = suggestionText.includes('+') || suggestionText.toLowerCase().includes('increase');
+    const isDecrease = suggestionText.includes('-') || suggestionText.toLowerCase().includes('decrease');
+    
+    if (isIncrease) {
+        return <ArrowUp className="h-4 w-4 text-green-500" />
+    }
+    if (isDecrease) {
+        return <ArrowDown className="h-4 w-4 text-red-500" />
+    }
+    return <Tag className="h-4 w-4 text-muted-foreground" />;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-primary" />
+          AI Pricing Suggestions
+        </CardTitle>
+        <CardDescription>
+          Dynamic pricing based on forecast and stock.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {loading ? (
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="space-y-2 flex-1">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+          </div>
+        ) : (
+          suggestions.map((s, index) => (
+            <div key={index} className="flex items-start gap-4">
+              <div className={cn("mt-1 p-1.5 rounded-full",
+                s.suggestion.includes('+') || s.suggestion.toLowerCase().includes('increase') ? 'bg-green-100 dark:bg-green-900/50' : '',
+                s.suggestion.includes('-') || s.suggestion.toLowerCase().includes('decrease') ? 'bg-red-100 dark:bg-red-900/50' : 'bg-gray-100 dark:bg-gray-900/50',
+              )}>
+                {renderSuggestionIcon(s.suggestion)}
+              </div>
+              <div>
+                <p className="font-semibold">
+                  {s.productName}: <span className={cn(
+                     s.suggestion.includes('+') || s.suggestion.toLowerCase().includes('increase') ? 'text-green-600' : '',
+                     s.suggestion.includes('-') || s.suggestion.toLowerCase().includes('decrease') ? 'text-red-600' : 'text-muted-foreground',
+                  )}>{s.suggestion}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {s.reasoning}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
+         { !loading && suggestions.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">No pricing suggestions at the moment.</p>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
